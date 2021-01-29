@@ -1,83 +1,51 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class GroupAnagram {
 
-	// class for each word of duplicate array
-	static class Word {
-		String str; // to store word itself
-		int index; // index of the word in the
-		// original array
+	private static void printAnagrams(String arr[]) {
+		HashMap<String, List<String>> map = new HashMap<>();
 
-		// constructor
-		Word(String str, int index) {
-			this.str = str;
-			this.index = index;
+		// loop over all words
+		for (int i = 0; i < arr.length; i++) {
+
+			// convert to char array, sort and
+			// then re-convert to string
+			String word = arr[i];
+			char[] letters = word.toCharArray();
+			Arrays.sort(letters);
+			String newWord = new String(letters);
+
+			// after sorting
+			if (map.containsKey(newWord)) {
+
+				map.get(newWord).add(word);
+			} else {
+
+				// This is the first time 
+				// adding a word for a specific
+				List<String> words = new ArrayList<>();
+				words.add(word);
+				map.put(newWord, words);
+			}
 		}
-	}
 
-	// class to represent duplicate array.
-	static class DupArray {
-		Word[] array; // Array of words
-		int size; // Size of array
-
-		// constructor
-		public DupArray(String str[], int size) {
-			this.size = size;
-			array = new Word[size];
-
-			// One by one copy words from the
-			// given wordArray to dupArray
-			int i;
-			for (i = 0; i < size; ++i) {
-				// create a word Object with the
-				// str[i] as str and index as i
-				array[i] = new Word(str[i], i);
+		// print all the values where size is > 1
+		// If we want to print non-anagrams,
+		// just print the values having size = 1
+		for (String s : map.keySet()) {
+			List<String> values = map.get(s);
+			if (values.size() > 1) {
+				System.out.print(values);
 			}
 		}
 	}
 
-	// Compare two words. Used in Arrays.sort() for
-	// sorting an array of words
-	static class compStr implements Comparator<Word> {
-		public int compare(Word a, Word b) {
-			return a.str.compareTo(b.str);
-		}
-	}
+	public static void main(String[] args) {
 
-	// Given a list of words in wordArr[],
-	static void printAnagramsTogether(String wordArr[], int size) {
-		// Step 1: Create a copy of all words present
-		// in given wordArr. The copy will also have
-		// original indexes of words
-		DupArray dupArray = new DupArray(wordArr, size);
-
-		// Step 2: Iterate through all words in
-		// dupArray and sort individual words.
-		int i;
-		for (i = 0; i < size; ++i) {
-			char[] char_arr = dupArray.array[i].str.toCharArray();
-			Arrays.sort(char_arr);
-			dupArray.array[i].str = new String(char_arr);
-		}
-
-		// Step 3: Now sort the array of words in
-		// dupArray
-		Arrays.sort(dupArray.array, new compStr());
-
-		// Step 4: Now all words in dupArray are together,
-		// but these words are changed. Use the index
-		// member of word struct to get the corresponding
-		// original word
-		for (i = 0; i < size; ++i)
-			System.out.print(wordArr[dupArray.array[i].index] + " ");
-	}
-
-	// Driver program to test above functions
-	public static void main(String args[]) {
 		String wordArr[] = { "CAT", "DOG", "TAC", "MAD", "DAM" ,"AMD","GOD","SET"};
-		int size = wordArr.length;
-		printAnagramsTogether(wordArr, size);
+		printAnagrams(wordArr);
 	}
-
 }
